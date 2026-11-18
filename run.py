@@ -30,20 +30,27 @@ def digest(path):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("output", type=Path)
+    parser.add_argument("--codex-cloud", action="store_true", help="Label a run on the managed Codex Cloud environment")
     args = parser.parse_args()
     output = args.output
     output.mkdir(parents=True, exist_ok=False)
     runner = os.environ.get("GITHUB_RUN_ID")
+    service = "직접 실행 환경"
+    if runner:
+        service = "GitHub Actions hosted runner"
+    elif args.codex_cloud:
+        service = "Codex Cloud managed Linux environment"
     record = {
         "started_at_utc": now(),
         "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
         "model_version": MODEL_VERSION,
         "platform": platform.system() + " " + platform.machine(),
         "python": platform.python_version(),
+        "os": platform.freedesktop_os_release().get("PRETTY_NAME") if platform.system() == "Linux" else platform.system(),
         "packages": {name: version(name) for name in
                      ("scikit-learn", "numpy", "scipy", "joblib", "threadpoolctl")},
-        "service": "GitHub Actions hosted runner" if runner else "직접 실행 환경",
-        "region": "GitHub 호스팅 러너에서 실행 리전을 지정하지 않으며 실행 위치는 확인되지 않음" if runner else None,
+        "service": service,
+        "region": "GitHub 호스팅 러너에서 실행 리전을 지정하지 않으며 실행 위치는 확인되지 않음" if runner else ("Codex Cloud에서 실행 리전은 사용자에게 공개되지 않음" if args.codex_cloud else None),
         "runner_image": os.environ.get("ImageOS"),
         "runner_image_version": os.environ.get("ImageVersion"),
         "run_url": f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{runner}" if runner else None,
