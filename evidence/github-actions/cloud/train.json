@@ -1,0 +1,5 @@
+{
+  "model_version": "digits-logreg-v1",
+  "train_count": 1347,
+  "seed": 42
+}

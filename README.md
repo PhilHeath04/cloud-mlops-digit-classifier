@@ -64,7 +64,7 @@ python -m venv .venv
 
 ## 클라우드 실행, 오류 복구, 재실행
 
-실제 실행은 Codex Cloud의 관리형 Linux 환경에서 CPU로 수행했습니다. 리전은 공개된 환경 정보에서 확인할 수 없었습니다. 데이터는 버전 고정된 Python 패키지에서 로드하고, 모델과 요청은 일회성 임시 폴더에 생성했습니다. 결과 JSON은 `evidence/`에 복사해 보관했습니다. CPU에서 끝나는 짧은 배치 작업이므로 별도 VM, 상시 서버, 외부 저장소가 필요하지 않습니다.
+최초 실행은 Codex Cloud의 관리형 Linux 환경에서 CPU로 수행했습니다. 리전은 공개된 환경 정보에서 확인할 수 없었습니다. 데이터는 버전 고정된 Python 패키지에서 로드하고, 모델과 요청은 일회성 임시 폴더에 생성했습니다. 결과 JSON은 `evidence/`에 복사해 보관했습니다. CPU에서 끝나는 짧은 배치 작업이므로 별도 VM, 상시 서버, 외부 저장소가 필요하지 않습니다.
 
 - [최초 실행](evidence/codex-cloud/run.json)은 UTC 시각, Git 커밋, 모델 버전 및 SHA-256, Python과 패키지 버전, 입력 해시, 명령 및 출력 위치를 기록합니다. [평가 JSON](evidence/codex-cloud/evaluation.json)에 혼동 행렬과 오분류 이미지가 있습니다.
 - [실패 입력](evidence/codex-cloud/input_before.json)은 빈 JSON 객체입니다. `predict`가 필수 `pixels` 필드를 읽지 못해 종료 코드 2를 반환했고 [오류 메시지](evidence/codex-cloud/failed_request.stderr.txt)를 남겼습니다. 이 요청에서는 예측을 생성하지 않았습니다. 예상치 못한 종료 코드는 파이프라인을 중단합니다.
@@ -73,9 +73,11 @@ python -m venv .venv
 
 ## 공개 저장소와 재실행 설정
 
-저장소를 GitHub에 올릴 때 `main`에 소스와 `evidence/`를 함께 올립니다. [워크플로](.github/workflows/digits.yml)는 `main`에 코드가 올라가면 Ubuntu 24.04 러너에서 실행합니다. 필요하면 GitHub의 **Actions → Cloud digit classification → Run workflow**에서 한 번 더 실행할 수 있습니다. 워크플로는 기본 실행과 새 클론 설치를 수행하고 `execution-evidence` 아티팩트를 보관합니다. 실행 성공을 확인한 뒤 아티팩트의 JSON과 로그를 `evidence/github-actions/`에 추가하고 저장소 주소가 로그아웃 상태에서 열리는지 점검합니다.
+공개 저장소의 `main`에 소스와 실행 기록을 보관했습니다. [GitHub Actions 실행](https://github.com/PhilHeath04/cloud-mlops-digit-classifier/actions/runs/44223963148)은 Ubuntu 24.04 호스팅 러너에서 학습, 평가, 오류 재현과 복구, 새 클론 재실행을 완료했습니다. 실행 리전은 이 러너에서 지정할 수 없으며 실제 위치도 표시되지 않습니다.
 
-현재 계정 연결로 공개 저장소 생성을 시도했으나 GitHub API가 HTTP 403(`Resource not accessible by integration`)을 반환했습니다. GitHub Actions 실행 기록과 공개 URL은 아직 없습니다.
+- [클라우드 실행 기록](evidence/github-actions/cloud/run.json)과 [평가 결과](evidence/github-actions/cloud/evaluation.json)에서 평가 450건 중 모델 433건과 기준 모델 46건의 정답을 확인할 수 있습니다. 필수 입력 누락으로 종료 코드 2를 반환했고, 같은 명령을 다시 실행하자 숫자 0이 반환됐습니다.
+- [새 클론 실행 기록](evidence/github-actions/clean-clone/run.json)과 [정리 결과](evidence/github-actions/clone-cleanup.json)에서 의존성 재설치, 재실행, 임시 모델과 복제 폴더 삭제를 확인할 수 있습니다.
+- 재실행은 GitHub의 **Actions → Cloud digit classification → Run workflow**에서 시작합니다. 워크플로는 두 실행의 JSON과 로그를 `execution-evidence` 아티팩트에 담습니다.
 
 ## 권한, 비용 및 정리
 

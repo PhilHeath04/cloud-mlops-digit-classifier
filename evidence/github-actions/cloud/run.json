@@ -1,0 +1,133 @@
+{
+  "started_at_utc": "2026-11-18T02:32:23.315654+00:00",
+  "git_commit": "2223a78975dcfeda27deff49ba9daea63e2c88f0",
+  "model_version": "digits-logreg-v1",
+  "platform": "Linux x86_64",
+  "python": "3.12.16",
+  "os": "Ubuntu 24.04.5 LTS",
+  "packages": {
+    "scikit-learn": "1.8.0",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "joblib": "1.5.3",
+    "threadpoolctl": "3.6.0"
+  },
+  "service": "GitHub Actions hosted runner",
+  "region": "GitHub 호스팅 러너에서 실행 리전을 지정하지 않으며 실행 위치는 확인되지 않음",
+  "runner_image": "ubuntu24",
+  "runner_image_version": "20261111.370.1",
+  "run_url": "https://github.com/PhilHeath04/cloud-mlops-digit-classifier/actions/runs/44223963148",
+  "configuration": {
+    "test_fraction": 0.25,
+    "stratified": true,
+    "seed": 42,
+    "C": 1.0,
+    "max_iter": 2000,
+    "pixel_divisor": 16
+  },
+  "steps": [
+    {
+      "name": "train",
+      "started_at_utc": "2026-11-18T02:32:23.325702+00:00",
+      "completed_at_utc": "2026-11-18T02:32:24.857432+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "train",
+        "--model",
+        "/tmp/digits-model-pkyqux5p/digits.joblib"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "status": "success",
+      "input_snapshot": null,
+      "input_sha256": null,
+      "output_file": "train.json"
+    },
+    {
+      "name": "evaluation",
+      "started_at_utc": "2026-11-18T02:32:24.857739+00:00",
+      "completed_at_utc": "2026-11-18T02:32:25.948679+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "evaluate",
+        "--model",
+        "/tmp/digits-model-pkyqux5p/digits.joblib"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "status": "success",
+      "input_snapshot": null,
+      "input_sha256": null,
+      "output_file": "evaluation.json"
+    },
+    {
+      "name": "failed_request",
+      "started_at_utc": "2026-11-18T02:32:25.949714+00:00",
+      "completed_at_utc": "2026-11-18T02:32:27.020305+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "predict",
+        "--model",
+        "/tmp/digits-model-pkyqux5p/digits.joblib",
+        "--input",
+        "/tmp/digits-model-pkyqux5p/request.json"
+      ],
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "status": "failure",
+      "input_snapshot": "input_before.json",
+      "input_sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "stderr_file": "failed_request.stderr.txt"
+    },
+    {
+      "name": "recovered_request",
+      "started_at_utc": "2026-11-18T02:32:27.020797+00:00",
+      "completed_at_utc": "2026-11-18T02:32:28.101290+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "predict",
+        "--model",
+        "/tmp/digits-model-pkyqux5p/digits.joblib",
+        "--input",
+        "/tmp/digits-model-pkyqux5p/request.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "status": "success",
+      "input_snapshot": "input_after.json",
+      "input_sha256": "6262835adc6a04b10bd7e97f924e870b17ef20ed43e6e8fe76ab986f793e9229",
+      "output_file": "recovered_request.json"
+    },
+    {
+      "name": "normal_request",
+      "started_at_utc": "2026-11-18T02:32:28.101596+00:00",
+      "completed_at_utc": "2026-11-18T02:32:29.162069+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "predict",
+        "--model",
+        "/tmp/digits-model-pkyqux5p/digits.joblib",
+        "--input",
+        "runs/cloud/input_after.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "status": "success",
+      "input_snapshot": "input_after.json",
+      "input_sha256": "6262835adc6a04b10bd7e97f924e870b17ef20ed43e6e8fe76ab986f793e9229",
+      "output_file": "normal_request.json"
+    }
+  ],
+  "status": "success",
+  "model_sha256": "a60dcbe7f15b369eefbc8ae96df6a94e9471a152a3eec2df8f6f333c36e87064",
+  "cleanup": {
+    "temporary_directory": "/tmp/digits-model-pkyqux5p",
+    "still_exists": false
+  },
+  "completed_at_utc": "2026-11-18T02:32:29.162730+00:00"
+}

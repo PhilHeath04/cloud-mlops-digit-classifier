@@ -1,0 +1,133 @@
+{
+  "started_at_utc": "2026-11-18T02:32:42.610892+00:00",
+  "git_commit": "2223a78975dcfeda27deff49ba9daea63e2c88f0",
+  "model_version": "digits-logreg-v1",
+  "platform": "Linux x86_64",
+  "python": "3.12.16",
+  "os": "Ubuntu 24.04.5 LTS",
+  "packages": {
+    "scikit-learn": "1.8.0",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "joblib": "1.5.3",
+    "threadpoolctl": "3.6.0"
+  },
+  "service": "GitHub Actions hosted runner",
+  "region": "GitHub 호스팅 러너에서 실행 리전을 지정하지 않으며 실행 위치는 확인되지 않음",
+  "runner_image": "ubuntu24",
+  "runner_image_version": "20261111.370.1",
+  "run_url": "https://github.com/PhilHeath04/cloud-mlops-digit-classifier/actions/runs/44223963148",
+  "configuration": {
+    "test_fraction": 0.25,
+    "stratified": true,
+    "seed": 42,
+    "C": 1.0,
+    "max_iter": 2000,
+    "pixel_divisor": 16
+  },
+  "steps": [
+    {
+      "name": "train",
+      "started_at_utc": "2026-11-18T02:32:42.621153+00:00",
+      "completed_at_utc": "2026-11-18T02:32:44.358115+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "train",
+        "--model",
+        "/tmp/digits-model-2fk6d_dw/digits.joblib"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "status": "success",
+      "input_snapshot": null,
+      "input_sha256": null,
+      "output_file": "train.json"
+    },
+    {
+      "name": "evaluation",
+      "started_at_utc": "2026-11-18T02:32:44.358468+00:00",
+      "completed_at_utc": "2026-11-18T02:32:45.424671+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "evaluate",
+        "--model",
+        "/tmp/digits-model-2fk6d_dw/digits.joblib"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "status": "success",
+      "input_snapshot": null,
+      "input_sha256": null,
+      "output_file": "evaluation.json"
+    },
+    {
+      "name": "failed_request",
+      "started_at_utc": "2026-11-18T02:32:45.425348+00:00",
+      "completed_at_utc": "2026-11-18T02:32:46.474222+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "predict",
+        "--model",
+        "/tmp/digits-model-2fk6d_dw/digits.joblib",
+        "--input",
+        "/tmp/digits-model-2fk6d_dw/request.json"
+      ],
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "status": "failure",
+      "input_snapshot": "input_before.json",
+      "input_sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "stderr_file": "failed_request.stderr.txt"
+    },
+    {
+      "name": "recovered_request",
+      "started_at_utc": "2026-11-18T02:32:46.474745+00:00",
+      "completed_at_utc": "2026-11-18T02:32:47.548026+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "predict",
+        "--model",
+        "/tmp/digits-model-2fk6d_dw/digits.joblib",
+        "--input",
+        "/tmp/digits-model-2fk6d_dw/request.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "status": "success",
+      "input_snapshot": "input_after.json",
+      "input_sha256": "6262835adc6a04b10bd7e97f924e870b17ef20ed43e6e8fe76ab986f793e9229",
+      "output_file": "recovered_request.json"
+    },
+    {
+      "name": "normal_request",
+      "started_at_utc": "2026-11-18T02:32:47.548347+00:00",
+      "completed_at_utc": "2026-11-18T02:32:48.596447+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "predict",
+        "--model",
+        "/tmp/digits-model-2fk6d_dw/digits.joblib",
+        "--input",
+        "/home/runner/work/cloud-mlops-digit-classifier/cloud-mlops-digit-classifier/runs/clean-clone/input_after.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "status": "success",
+      "input_snapshot": "input_after.json",
+      "input_sha256": "6262835adc6a04b10bd7e97f924e870b17ef20ed43e6e8fe76ab986f793e9229",
+      "output_file": "normal_request.json"
+    }
+  ],
+  "status": "success",
+  "model_sha256": "a60dcbe7f15b369eefbc8ae96df6a94e9471a152a3eec2df8f6f333c36e87064",
+  "cleanup": {
+    "temporary_directory": "/tmp/digits-model-2fk6d_dw",
+    "still_exists": false
+  },
+  "completed_at_utc": "2026-11-18T02:32:48.597064+00:00"
+}
