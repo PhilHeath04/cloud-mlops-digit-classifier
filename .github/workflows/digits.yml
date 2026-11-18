@@ -1,0 +1,45 @@
+name: Cloud digit classification
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['evidence/**', 'README.md']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements.txt
+      - run: python run.py runs/cloud
+      - name: Re-run from a clean clone
+        run: |
+          set -euo pipefail
+          clone_dir="$(mktemp -d)"
+          trap 'rm -rf -- "$clone_dir"' EXIT
+          git clone --quiet --no-local "$GITHUB_WORKSPACE" "$clone_dir/repo"
+          cd "$clone_dir/repo"
+          git checkout --quiet --detach "$GITHUB_SHA"
+          python -m venv "$clone_dir/venv"
+          "$clone_dir/venv/bin/python" -m pip install -r requirements.txt
+          "$clone_dir/venv/bin/python" run.py "$GITHUB_WORKSPACE/runs/clean-clone"
+          cd "$GITHUB_WORKSPACE"
+          rm -rf -- "$clone_dir"
+          test ! -e "$clone_dir"
+          python -c 'import json, sys; print(json.dumps({"path":sys.argv[1],"still_exists":False}))' "$clone_dir" > runs/clone-cleanup.json
+          trap - EXIT
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: execution-evidence
+          path: runs/
+          retention-days: 7
