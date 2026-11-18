@@ -1,0 +1,133 @@
+{
+  "started_at_utc": "2026-11-18T02:17:19.697657+00:00",
+  "git_commit": "06b6bb01518ad0367c6a93a38bd8d4f630e3dce3",
+  "model_version": "digits-logreg-v1",
+  "platform": "Linux x86_64",
+  "python": "3.12.14",
+  "os": "Debian GNU/Linux 13 (trixie)",
+  "packages": {
+    "scikit-learn": "1.8.0",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "joblib": "1.5.3",
+    "threadpoolctl": "3.6.0"
+  },
+  "service": "Codex Cloud managed Linux environment",
+  "region": "Codex Cloud에서 실행 리전은 사용자에게 공개되지 않음",
+  "runner_image": null,
+  "runner_image_version": null,
+  "run_url": null,
+  "configuration": {
+    "test_fraction": 0.25,
+    "stratified": true,
+    "seed": 42,
+    "C": 1.0,
+    "max_iter": 2000,
+    "pixel_divisor": 16
+  },
+  "steps": [
+    {
+      "name": "train",
+      "started_at_utc": "2026-11-18T02:17:19.705862+00:00",
+      "completed_at_utc": "2026-11-18T02:17:20.942525+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "train",
+        "--model",
+        "/tmp/digits-model-dpxygx5x/digits.joblib"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "status": "success",
+      "input_snapshot": null,
+      "input_sha256": null,
+      "output_file": "train.json"
+    },
+    {
+      "name": "evaluation",
+      "started_at_utc": "2026-11-18T02:17:20.942817+00:00",
+      "completed_at_utc": "2026-11-18T02:17:22.010139+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "evaluate",
+        "--model",
+        "/tmp/digits-model-dpxygx5x/digits.joblib"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "status": "success",
+      "input_snapshot": null,
+      "input_sha256": null,
+      "output_file": "evaluation.json"
+    },
+    {
+      "name": "failed_request",
+      "started_at_utc": "2026-11-18T02:17:22.010829+00:00",
+      "completed_at_utc": "2026-11-18T02:17:23.130645+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "predict",
+        "--model",
+        "/tmp/digits-model-dpxygx5x/digits.joblib",
+        "--input",
+        "/tmp/digits-model-dpxygx5x/request.json"
+      ],
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "status": "failure",
+      "input_snapshot": "input_before.json",
+      "input_sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "stderr_file": "failed_request.stderr.txt"
+    },
+    {
+      "name": "recovered_request",
+      "started_at_utc": "2026-11-18T02:17:23.131041+00:00",
+      "completed_at_utc": "2026-11-18T02:17:24.259006+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "predict",
+        "--model",
+        "/tmp/digits-model-dpxygx5x/digits.joblib",
+        "--input",
+        "/tmp/digits-model-dpxygx5x/request.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "status": "success",
+      "input_snapshot": "input_after.json",
+      "input_sha256": "6262835adc6a04b10bd7e97f924e870b17ef20ed43e6e8fe76ab986f793e9229",
+      "output_file": "recovered_request.json"
+    },
+    {
+      "name": "normal_request",
+      "started_at_utc": "2026-11-18T02:17:24.259411+00:00",
+      "completed_at_utc": "2026-11-18T02:17:25.525354+00:00",
+      "command": [
+        "python",
+        "service.py",
+        "predict",
+        "--model",
+        "/tmp/digits-model-dpxygx5x/digits.joblib",
+        "--input",
+        "evidence/codex-cloud/input_after.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "status": "success",
+      "input_snapshot": "input_after.json",
+      "input_sha256": "6262835adc6a04b10bd7e97f924e870b17ef20ed43e6e8fe76ab986f793e9229",
+      "output_file": "normal_request.json"
+    }
+  ],
+  "status": "success",
+  "model_sha256": "56b740a5f1f527d6cdb6a25a68e6cafa205e5b978c1275c109cd7a8221b687cc",
+  "cleanup": {
+    "temporary_directory": "/tmp/digits-model-dpxygx5x",
+    "still_exists": false
+  },
+  "completed_at_utc": "2026-11-18T02:17:25.525839+00:00"
+}
